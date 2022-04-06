@@ -19,7 +19,7 @@ When done with setup in your project root folder, simply run the comman **yarn d
 
 ### Playground tests
 
-You can then go to any graphql playground of tour choice(Apollo studio, Altair etc) and put the url **http://localhost:<your-port-number>/graphql**
+You can then go to any graphql playground of tour choice(Apollo studio, Altair etc) and put the url **http://localhost:your-port-number/graphql**
 
 ![alt text](https://res.cloudinary.com/greatchinex/image/upload/v1649249186/startuptasks.png)
 
