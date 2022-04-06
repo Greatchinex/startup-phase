@@ -1,14 +1,14 @@
-import fs from 'fs'
-import { join } from 'path'
-
 import { ResStatus } from '../graphql/schema/generic'
 import { phaseSchema } from '../models/phase'
+
+import { DbMethods } from '../helpers/db'
+
+const dbMethods = new DbMethods()
 
 export class PhaseService {
   // Create a new startup phase
   public create_phase(phaseName: string): ResStatus {
-    const getDB = fs.readFileSync(join(__dirname, '../../db.json'), 'utf-8')
-    const parseDB = JSON.parse(getDB.toString())
+    const parseDB = dbMethods.getDB()
 
     const phaseNumber = parseDB.length + 1
 
@@ -21,7 +21,7 @@ export class PhaseService {
 
     parseDB.push(newPhase)
 
-    fs.writeFileSync(join(__dirname, '../../db.json'), JSON.stringify(parseDB, null, 2))
+    dbMethods.saveToDB(parseDB)
 
     return {
       message: 'New phase added successfully',
@@ -31,8 +31,7 @@ export class PhaseService {
 
   // Add a task to a startup phase
   public add_phase_task(taskName: string, phaseId: string): ResStatus {
-    const getDB = fs.readFileSync(join(__dirname, '../../db.json'), 'utf-8')
-    const parseDB = JSON.parse(getDB.toString())
+    const parseDB = dbMethods.getDB()
 
     const findPhase = parseDB.find((p: any) => p.uuid === phaseId)
 
@@ -51,7 +50,7 @@ export class PhaseService {
 
     findPhase.tasks.push(newTask)
 
-    fs.writeFileSync(join(__dirname, '../../db.json'), JSON.stringify(parseDB, null, 2))
+    dbMethods.saveToDB(parseDB)
 
     return {
       message: 'Task created successfully',
@@ -61,16 +60,14 @@ export class PhaseService {
 
   // Fetch all phase and tasks attached to the phase
   public my_phases(): Array<phaseSchema> {
-    const getDB = fs.readFileSync(join(__dirname, '../../db.json'), 'utf-8')
-    const parseDB = JSON.parse(getDB.toString())
+    const parseDB = dbMethods.getDB()
 
     return parseDB
   }
 
   // Mark a task as completed
   public complete_task(taskId: string, phaseId: string) {
-    const getDB = fs.readFileSync(join(__dirname, '../../db.json'), 'utf-8')
-    const parseDB = JSON.parse(getDB.toString())
+    const parseDB = dbMethods.getDB()
 
     const findPhase = parseDB.find((p: any) => p.uuid === phaseId)
 
@@ -108,7 +105,7 @@ export class PhaseService {
 
     findTask.completed = true
 
-    fs.writeFileSync(join(__dirname, '../../db.json'), JSON.stringify(parseDB, null, 2))
+    dbMethods.saveToDB(parseDB)
 
     return {
       message: 'Task marked as completed',
