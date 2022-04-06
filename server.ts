@@ -3,26 +3,20 @@ import { GraphQLError } from 'graphql'
 import { ApolloServer } from 'apollo-server-express'
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
 import depthLimit from 'graphql-depth-limit'
-import { buildSchema, Resolver, Query } from 'type-graphql'
+import { buildSchema } from 'type-graphql'
 import http from 'http'
 import { config } from 'dotenv'
 
-config()
+import resolvers from './graphql/resolvers'
 
-@Resolver()
-class HelloResolver {
-  @Query(() => String)
-  async hello() {
-    return 'Hello world'
-  }
-}
+config()
 
 const env = process.env.NODE_ENV
 
 const graphQlServer = async (app: any, PORT: string | number) => {
   // Graphl Server
   const schema = await buildSchema({
-    resolvers: [HelloResolver],
+    resolvers,
     emitSchemaFile: false,
     validate: false,
     dateScalarMode: 'isoDate'
