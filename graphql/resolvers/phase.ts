@@ -1,5 +1,6 @@
-import { Resolver, Mutation, Arg } from 'type-graphql'
+import { Resolver, Mutation, Arg, Query } from 'type-graphql'
 
+import { phaseSchema } from '../../models/phase'
 import { ResStatus } from '../schema/generic'
 
 import { PhaseService } from '../../services/phase.service'
@@ -31,6 +32,16 @@ export class PhaseReslover {
         `Could not create task for phase ==> ${phaseId}`,
         `Error message: ${error.message ?? 'N/A'}`
       )
+      return error
+    }
+  }
+
+  @Query(() => [phaseSchema], { description: 'Fetch phases along with task' })
+  my_phases(): Array<phaseSchema> {
+    try {
+      return phaseService.my_phases()
+    } catch (error) {
+      console.log('Could not create a phase', `Error message: ${error.message ?? 'N/A'}`)
       return error
     }
   }

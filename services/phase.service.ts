@@ -2,6 +2,7 @@ import fs from 'fs'
 import { join } from 'path'
 
 import { ResStatus } from '../graphql/schema/generic'
+import { phaseSchema } from '../models/phase'
 
 export class PhaseService {
   // Create a new startup phase
@@ -56,5 +57,13 @@ export class PhaseService {
       message: 'Task created successfully',
       success: true
     }
+  }
+
+  // Fetch all phase and tasks attached to the phase
+  public my_phases(): Array<phaseSchema> {
+    const getDB = fs.readFileSync(join(__dirname, '../../db.json'), 'utf-8')
+    const parseDB = JSON.parse(getDB.toString())
+
+    return parseDB
   }
 }
