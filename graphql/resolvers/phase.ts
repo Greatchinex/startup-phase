@@ -16,7 +16,7 @@ export class PhaseReslover {
 
       return resPayload
     } catch (error) {
-      console.log('Could not create a phase', `Error message: ${error.message ?? 'N/A'}`)
+      console.log('Phase: Could not create a phase', `Error message: ${error.message ?? 'N/A'}`)
       return error
     }
   }
@@ -29,7 +29,7 @@ export class PhaseReslover {
       return resPayload
     } catch (error) {
       console.log(
-        `Could not create task for phase ==> ${phaseId}`,
+        `Phase: Could not create task for phase ==> ${phaseId}`,
         `Error message: ${error.message ?? 'N/A'}`
       )
       return error
@@ -41,7 +41,23 @@ export class PhaseReslover {
     try {
       return phaseService.my_phases()
     } catch (error) {
-      console.log('Could not create a phase', `Error message: ${error.message ?? 'N/A'}`)
+      console.log('Phase: Error fetching Phase', `Error message: ${error.message ?? 'N/A'}`)
+      return error
+    }
+  }
+
+  @Mutation(() => ResStatus, { description: 'Mark a task as completed' })
+  complete_task(@Arg('taskId') taskId: string, @Arg('phaseId') phaseId: string): ResStatus {
+    try {
+      const resPayload = phaseService.complete_task(taskId, phaseId)
+
+      return resPayload
+    } catch (error) {
+      console.log(
+        'Phase: Failed to mark task as complete',
+        `TaskId ==> ${taskId}, PhaseId ==> ${phaseId}`,
+        `Error message: ${error.message ?? 'N/A'}`
+      )
       return error
     }
   }

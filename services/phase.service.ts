@@ -66,4 +66,53 @@ export class PhaseService {
 
     return parseDB
   }
+
+  // Mark a task as completed
+  public complete_task(taskId: string, phaseId: string) {
+    const getDB = fs.readFileSync(join(__dirname, '../../db.json'), 'utf-8')
+    const parseDB = JSON.parse(getDB.toString())
+
+    const findPhase = parseDB.find((p: any) => p.uuid === phaseId)
+
+    if (!findPhase) {
+      return {
+        message: 'Phase not found, Could not mark task as completed',
+        success: false
+      }
+    }
+
+    // Check if last phase has been completed
+    const lastPhaseNumber = findPhase.number - 1
+    const previousPhase = parseDB.find((p: any) => p.number === lastPhaseNumber)
+
+    if (previousPhase) {
+      // Make sure all tasks are completed for previous phase
+      const previousPhaseTasks = previousPhase.tasks.find((t: any) => t.completed === false)
+
+      if (previousPhaseTasks) {
+        return {
+          message: 'Please complete all tasks from the previous phase',
+          success: false
+        }
+      }
+    }
+
+    const findTask = findPhase.tasks.find((t: any) => t.uuid === taskId)
+
+    if (!findTask) {
+      return {
+        message: 'Task not found, Could not mark task as completed',
+        success: false
+      }
+    }
+
+    findTask.completed = true
+
+    fs.writeFileSync(join(__dirname, '../../db.json'), JSON.stringify(parseDB, null, 2))
+
+    return {
+      message: 'Task marked as completed',
+      success: true
+    }
+  }
 }
